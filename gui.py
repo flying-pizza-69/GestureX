@@ -1,12 +1,13 @@
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, GLib, GdkPixbuf, Gdk
+from gi.repository import Gtk, GdkPixbuf, Gdk, GLib
 import cv2
 import numpy as np
 import mediapipe as mp
 from tensorflow.keras.models import load_model
 import threading
 import os
+import json
 
 class_names = ['okay', 'peace', 'thumbs up', 'thumbs down', 'call me', 'stop', 'rock', 'live long', 'fist', 'smile']
 
@@ -77,11 +78,13 @@ class Main(Gtk.Window):
         export_btn = Gtk.Button(label="Export")
         export_btn.set_hexpand(True)
         button_row.attach_next_to(export_btn, save_btn, Gtk.PositionType.RIGHT, 1, 1)
+        export_btn.connect("clicked", self.on_export_clicked)
 
         # Add "Import" button
         import_btn = Gtk.Button(label="Import")
         import_btn.set_hexpand(True)
         button_row.attach_next_to(import_btn, export_btn, Gtk.PositionType.RIGHT, 1, 1)
+        import_btn.connect("clicked", self.on_import_clicked)
 
         # Create a separator between command binding section and CV2 preview
         separator = Gtk.Separator(orientation=Gtk.Orientation.VERTICAL)
@@ -217,6 +220,34 @@ class Main(Gtk.Window):
             if command.strip() != '':
                 gesture_commands[label] = command
         print("Commands updated:", gesture_commands)
+
+    def on_export_clicked(self, widget):
+        filename = "gesture_commands.json"
+        with open(filename, 'w') as f:
+            json.dump(gesture_commands, f)
+        print(f"Gesture commands exported to {filename}")
+
+    def on_import_clicked(self, widget):
+        dialog = Gtk.FileChooserDialog(title="Please choose a JSON file", parent=self, action=Gtk.FileChooserAction.OPEN)
+        dialog.add_buttons(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OPEN, Gtk.ResponseType.OK)
+
+        filter_json = Gtk.FileFilter()
+        filter_json.set_name("JSON files")
+        filter_json.add_mime_type("application/json")
+        dialog.add_filter(filter_json)
+
+        response = dialog.run()
+        if response == Gtk.ResponseType.OK:
+            filename = dialog.get_filename()
+            with open(filename, 'r') as f:
+                data = json.load(f)
+                for label, command in data.items():
+                    self.text_entries[label].set_text(command)
+            print(f"Gesture commands imported from {filename}")
+        elif response == Gtk.ResponseType.CANCEL:
+            print("Import operation cancelled")
+
+        dialog.destroy()
 
     def close_window(self, *args):
         self.running = False
