@@ -1,4 +1,4 @@
-# Hand Gesture Control for PC
+# GestureX 
 
 GestureX enables you to control your Linux PC with X11 server using hand gestures. You can assign specific commands or functionalities to different hand gestures, allowing for hands-free interaction with your computer.
 
