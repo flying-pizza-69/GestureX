@@ -32,7 +32,7 @@ icons = {
     'stop': '✋',
     'rock': '🤟',
     'fist': '✊',
-    'smile': '😁',
+    'smile': '👉',
     'live long': '🖖'
 }
 
