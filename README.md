@@ -48,6 +48,9 @@ GestureX enables you to control your Linux PC using hand gestures. You can assig
 - Smile hand gesture
 - "Live long and prosper" Vulcan salute
 
+## Screenshots
+![Main UI](screenshots/screenshot1.png)
+
 ## Credits
 
 This project utilizes the hand gesture recognition model provided by the [Google MediaPipe project](https://github.com/google/mediapipe).
