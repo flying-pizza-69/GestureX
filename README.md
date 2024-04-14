@@ -34,6 +34,7 @@ GestureX enables you to control your Linux PC using hand gestures. You can assig
 1. Launch the application.
 2. Define hand gestures and assign commands or functionalities to them through the graphical user interface.
 3. Perform the defined hand gestures in front of your webcam to trigger the corresponding commands or functionalities.
+4. (Optional) Import the `gestures_commands.json` file to get sample bindings to test the app.
 
 ## Supported Hand Gestures
 
