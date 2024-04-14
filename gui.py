@@ -39,7 +39,7 @@ icons = {
 class Main(Gtk.Window):
 
     def __init__(self):
-        Gtk.Window.__init__(self, title="Label and Textbox Pairs")
+        Gtk.Window.__init__(self, title="GestureX")
         self.set_border_width(10)
 
         self.grid = Gtk.Grid()
