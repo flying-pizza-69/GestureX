@@ -11,7 +11,7 @@ GestureX enables you to control your Linux PC using hand gestures. You can assig
 
 ## Installation
 
-1. Clone the repository:
+1. Clone the repository (You can also clone this GitHub repo):
 
     ```bash
     git clone https://git.0x7f.in/sarthak/GestureX
