@@ -14,16 +14,42 @@ GestureX enables you to control your Linux PC using hand gestures. You can assig
 1. Clone the repository:
 
     ```bash
-    git clone https://git.0x7f.in/sarthak/GestureX.git
+    git clone https://github.com/flying-pizza-69/GestureX
+    ```
+
+2. Create and activate Virtual Environment
+    ```
+    cd GestureX
+    python3 -m venv venv
+    source venv/bin/activate
     ```
 
 2. Install the required dependencies:
 
     ```bash
-    pip3 install opencv-python numpy mediapipe tensorflow PyGObject 
+    (venv) pip install -r requirements.txt
     ```
 
-3. Run the application:
+3. Install the required fonts to display emojis
+
+- Arch Linux
+    ```bash
+    pacman -S noto-fonts-emoji
+    ```
+- Ubuntu or Debian
+    ```bash
+    apt-get install fonts-noto-color-emoji
+    ```
+- Fedora or RHEL Based
+    ```bash
+    dnf install google-noto-emoji-fonts
+    ```
+- openSUSE
+    ```bash
+    zypper install google-noto-emoji-fonts
+    ```
+
+4. Run the application:
 
     ```bash
     python3 gui.py
@@ -45,9 +71,11 @@ GestureX enables you to control your Linux PC using hand gestures. You can assig
 - "Call me" gesture
 - Stop gesture
 - Rock and roll sign
-- Fist
+- Fist gesture
 - Smile hand gesture
-- "Live long and prosper" Vulcan salute
+- "Live long" gesture
+
+These are the default gestures supported by the model. I am working on adding your own custom gesture as well.
 
 ## Screenshots
 ![Main UI](screenshots/screenshot1.png)

@@ -102,7 +102,18 @@ class Main(Gtk.Window):
 
         # Create a widget for displaying the video
         self.video_widget = Gtk.Image()
-        self.grid.attach(self.video_widget, 3, 1, 1, len(class_names)+1)
+        self.grid.attach(self.video_widget, 3, 1, 1, len(class_names))
+
+        # Camera source button
+        camera_sources = self.get_camera_sources()
+        self.camera_source_combo = Gtk.ComboBoxText()
+        for source in camera_sources:
+            self.camera_source_combo.append_text(f"Camera {source}")
+        self.camera_source_combo.set_active(0)  # Set default selection
+        self.grid.attach(self.camera_source_combo, 3, len(class_names)+1, 1, 1)
+
+        # Connect signal handler for dropdown menu
+        self.camera_source_combo.connect("changed", self.on_camera_source_changed)
 
         # Create a separate row for toggle buttons
         toggle_button_row = Gtk.Grid()
@@ -271,6 +282,22 @@ class Main(Gtk.Window):
             self.class_text_enabled = True
         else:
             self.class_text_enabled = False
+    
+    def get_camera_sources(self):
+        camera_sources = []
+        for i in range(10):  # Check up to 10 camera sources
+            cap = cv2.VideoCapture(i)
+            if cap.isOpened():
+                camera_sources.append(i)
+                cap.release()
+        return camera_sources
+
+    def on_camera_source_changed(self, combo):
+        active_text = combo.get_active_text()
+        if active_text:
+            camera_index = int(active_text.split()[-1])
+            self.cap.release()  # Release the previous camera
+            self.cap = cv2.VideoCapture(camera_index)  # Open the new camera
 
 win = Main()
 win.connect("destroy", win.close_window)

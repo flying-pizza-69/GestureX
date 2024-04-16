@@ -1,0 +1,5 @@
+opencv-python
+numpy
+mediapipe
+tensorflow==2.15.1
+PyGObject
