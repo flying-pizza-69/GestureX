@@ -60,6 +60,8 @@ class Main(Gtk.Window):
             label_widget.set_markup('<span size="xx-large">' + icons[label] + '</span>')
             textbox = Gtk.Entry()
             textbox.set_width_chars(30)
+            textbox.set_placeholder_text("Command")
+            textbox.set_tooltip_text("Enter the command to execute for this gesture. Hint: Can concatenate multiple commands with '&&'")
             self.grid.attach(label_widget, 0, i+1, 1, 1)
             self.grid.attach_next_to(textbox, label_widget, Gtk.PositionType.RIGHT, 1, 1)
             self.text_entries[label] = textbox
@@ -74,17 +76,21 @@ class Main(Gtk.Window):
         save_btn.set_hexpand(True)
         button_row.attach(save_btn, 0, 0, 1, 1)
         save_btn.connect("clicked", self.on_save_clicked)
+        save_btn.set_tooltip_text("Save the gesture commands in the program")
+        save_btn.connect("clicked", self.show_confirmation_message, "Commands saved successfully!")
 
         # Add "Export" button
         export_btn = Gtk.Button(label="Export")
         export_btn.set_hexpand(True)
         button_row.attach_next_to(export_btn, save_btn, Gtk.PositionType.RIGHT, 1, 1)
+        export_btn.set_tooltip_text("Export gesture commands into json file")
         export_btn.connect("clicked", self.on_export_clicked)
 
         # Add "Import" button
         import_btn = Gtk.Button(label="Import")
         import_btn.set_hexpand(True)
         button_row.attach_next_to(import_btn, export_btn, Gtk.PositionType.RIGHT, 1, 1)
+        import_btn.set_tooltip_text("Import gesture commands from json file")
         import_btn.connect("clicked", self.on_import_clicked)
 
         # Create a separator between command binding section and CV2 preview
@@ -104,6 +110,7 @@ class Main(Gtk.Window):
         # Create a widget for displaying the video
         self.video_widget = Gtk.Image()
         self.grid.attach(self.video_widget, 3, 1, 1, len(class_names))
+        self.video_widget.set_tooltip_text("Live video preview")
 
         controls_row = Gtk.Grid()
         controls_row.set_column_spacing(6)
@@ -115,18 +122,21 @@ class Main(Gtk.Window):
         for source in camera_sources:
             self.camera_source_combo.append_text(f"Camera {source}")
         self.camera_source_combo.set_active(0)  # Set default selection
+        self.camera_source_combo.set_tooltip_text("Select the camera source")
         controls_row.attach(self.camera_source_combo, 0, 0, 1, 1)
 
         # Create cooldown change textbox
         self.cooldown_textbox = Gtk.Entry()
         self.cooldown_textbox.set_width_chars(15)
         self.cooldown_textbox.set_placeholder_text("Gesture Cooldown (s)")
+        self.cooldown_textbox.set_tooltip_text("Set the cooldown time between executing the same gesture")
         controls_row.attach_next_to(self.cooldown_textbox, self.camera_source_combo, Gtk.PositionType.RIGHT, 1, 1)
 
         # Create the "Save" button
         save_button = Gtk.Button.new_with_label("Save")
         save_button.connect("clicked", self.update_cooldown)
         controls_row.attach_next_to(save_button, self.cooldown_textbox, Gtk.PositionType.RIGHT, 1, 1)
+        save_button.set_tooltip_text("Save the cooldown time")
 
         # Set equal width expansion for all controls
         self.camera_source_combo.set_hexpand(True)
@@ -142,11 +152,14 @@ class Main(Gtk.Window):
         self.grid.attach(toggle_button_row, 3, len(class_names) + 2, 1, 1)
 
         # Add buttons below the CV2 preview
-        self.preview_button = Gtk.ToggleButton(label="Toggle Preview")
+        self.preview_button = Gtk.ToggleButton(label="Enable Preview")
+        self.preview_button.set_tooltip_text("Enable or disable the video preview")
         self.preview_button.set_hexpand(True)
-        self.trace_button = Gtk.ToggleButton(label="Toggle Traces")
+        self.trace_button = Gtk.ToggleButton(label="Enable Traces")
+        self.trace_button.set_tooltip_text("Enable or disable the hand traces")
         self.trace_button.set_hexpand(True)
-        self.class_button = Gtk.ToggleButton(label="Toggle Label")
+        self.class_button = Gtk.ToggleButton(label="Enable Label")
+        self.class_button.set_tooltip_text("Enable or disable the gesture label")
         self.class_button.set_hexpand(True)
         
         # Add button signals
@@ -262,9 +275,14 @@ class Main(Gtk.Window):
 
     def on_export_clicked(self, widget):
         filename = "gesture_commands.json"
-        with open(filename, 'w') as f:
-            json.dump(gesture_commands, f)
-        print(f"Gesture commands exported to {filename}")
+        try:
+            with open(filename, 'w') as f:
+                json.dump(gesture_commands, f)
+                self.show_confirmation_message(self, "Gesture commands exported successfully!")
+            print(f"Gesture commands exported to {filename}")
+        except (IOError) as e:
+            print(f"Error exporting gesture commands: {str(e)}")
+            self.show_confirmation_message(self, "Error exporting gesture commands (check console for details)")
 
     def on_import_clicked(self, widget):
         dialog = Gtk.FileChooserDialog(title="Please choose a JSON file", parent=self, action=Gtk.FileChooserAction.OPEN)
@@ -296,21 +314,38 @@ class Main(Gtk.Window):
     def toggle_video_preview(self, button):
         if button.get_active():
             self.preview_enabled = True
+            button.set_label("Disable Preview")
         else:
             self.preview_enabled = False
+            button.set_label("Enable Preview")
 
     def toggle_hand_traces(self, button):
         if button.get_active():
             self.hand_trace_enabled = True
+            button.set_label("Disable Traces")
         else:
             self.hand_trace_enabled = False
+            button.set_label("Enable Traces")
 
     def toggle_class_text(self, button):
         if button.get_active():
             self.class_text_enabled = True
+            button.set_label("Disable Label")
         else:
             self.class_text_enabled = False
-    
+            button.set_label("Enable Label")
+            
+    def show_confirmation_message(self, widget, text):
+        dialog = Gtk.MessageDialog(
+            transient_for=self,
+            flags=0,
+            message_type=Gtk.MessageType.INFO,
+            buttons=Gtk.ButtonsType.OK,
+            text=text
+        )
+        dialog.run()
+        dialog.destroy()
+
     def get_camera_sources(self):
         camera_sources = []
         for i in range(10):  # Check up to 10 camera sources
@@ -318,6 +353,8 @@ class Main(Gtk.Window):
             if cap.isOpened():
                 camera_sources.append(i)
                 cap.release()
+            else:
+                break
         return camera_sources
 
     def on_camera_source_changed(self, combo):
