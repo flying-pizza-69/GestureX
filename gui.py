@@ -8,6 +8,7 @@ from tensorflow.keras.models import load_model
 import threading
 import os
 import json
+import time
 
 class_names = ['okay', 'peace', 'thumbs up', 'thumbs down', 'call me', 'stop', 'rock', 'live long', 'fist', 'smile']
 
@@ -104,13 +105,33 @@ class Main(Gtk.Window):
         self.video_widget = Gtk.Image()
         self.grid.attach(self.video_widget, 3, 1, 1, len(class_names))
 
+        controls_row = Gtk.Grid()
+        controls_row.set_column_spacing(6)
+        self.grid.attach(controls_row, 3, len(class_names) + 1, 1, 1)
+
         # Camera source button
         camera_sources = self.get_camera_sources()
         self.camera_source_combo = Gtk.ComboBoxText()
         for source in camera_sources:
             self.camera_source_combo.append_text(f"Camera {source}")
         self.camera_source_combo.set_active(0)  # Set default selection
-        self.grid.attach(self.camera_source_combo, 3, len(class_names)+1, 1, 1)
+        controls_row.attach(self.camera_source_combo, 0, 0, 1, 1)
+
+        # Create cooldown change textbox
+        self.cooldown_textbox = Gtk.Entry()
+        self.cooldown_textbox.set_width_chars(15)
+        self.cooldown_textbox.set_placeholder_text("Gesture Cooldown (s)")
+        controls_row.attach_next_to(self.cooldown_textbox, self.camera_source_combo, Gtk.PositionType.RIGHT, 1, 1)
+
+        # Create the "Save" button
+        save_button = Gtk.Button.new_with_label("Save")
+        save_button.connect("clicked", self.update_cooldown)
+        controls_row.attach_next_to(save_button, self.cooldown_textbox, Gtk.PositionType.RIGHT, 1, 1)
+
+        # Set equal width expansion for all controls
+        self.camera_source_combo.set_hexpand(True)
+        self.cooldown_textbox.set_hexpand(True)
+        save_button.set_hexpand(True)
 
         # Connect signal handler for dropdown menu
         self.camera_source_combo.connect("changed", self.on_camera_source_changed)
@@ -118,7 +139,7 @@ class Main(Gtk.Window):
         # Create a separate row for toggle buttons
         toggle_button_row = Gtk.Grid()
         toggle_button_row.set_column_spacing(6)
-        self.grid.attach(toggle_button_row, 3, len(class_names)+2, 1, 1)
+        self.grid.attach(toggle_button_row, 3, len(class_names) + 2, 1, 1)
 
         # Add buttons below the CV2 preview
         self.preview_button = Gtk.ToggleButton(label="Toggle Preview")
@@ -143,6 +164,7 @@ class Main(Gtk.Window):
         self.preview_enabled = False
         self.hand_trace_enabled = False
         self.class_text_enabled = False
+        self.cooldown = 5
         self.thread = threading.Thread(target=self.run_video_loop)
         self.thread.start()
 
@@ -152,6 +174,9 @@ class Main(Gtk.Window):
         mp_draw = mp.solutions.drawing_utils
 
         model = load_model('mp_hand_gesture')
+
+        # A cooldown dictionary to keep track of the last execution time for each gesture
+        gesture_cooldown = {}
 
         while self.running:
             ret, frame = self.cap.read()
@@ -180,7 +205,10 @@ class Main(Gtk.Window):
                         class_name = class_names[class_id]
                 
                 if class_name != '':
-                    os.system(gesture_commands[class_name])
+                    current_time = time.time()
+                    if class_name not in gesture_cooldown or current_time - gesture_cooldown[class_name] > self.cooldown:
+                        os.system(gesture_commands[class_name])
+                        gesture_cooldown[class_name] = current_time
                 
                 # Add label on top of the video
                 if self.class_text_enabled:
@@ -298,6 +326,15 @@ class Main(Gtk.Window):
             camera_index = int(active_text.split()[-1])
             self.cap.release()  # Release the previous camera
             self.cap = cv2.VideoCapture(camera_index)  # Open the new camera
+
+    def update_cooldown(self, widget):
+        cooldown = self.cooldown_textbox.get_text()
+        if cooldown.strip() != '':
+            try:
+                self.cooldown = int(cooldown)
+                print(f"Changed cooldown to {cooldown}")
+            except ValueError:
+                print("Invalid cooldown value. Cooldown must be an integer.")
 
 win = Main()
 win.connect("destroy", win.close_window)
