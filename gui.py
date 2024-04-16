@@ -74,6 +74,7 @@ class Main(Gtk.Window):
         save_btn.set_hexpand(True)
         button_row.attach(save_btn, 0, 0, 1, 1)
         save_btn.connect("clicked", self.on_save_clicked)
+        save_btn.connect("clicked", self.show_confirmation_message, "Commands saved successfully!")
 
         # Add "Export" button
         export_btn = Gtk.Button(label="Export")
@@ -142,11 +143,11 @@ class Main(Gtk.Window):
         self.grid.attach(toggle_button_row, 3, len(class_names) + 2, 1, 1)
 
         # Add buttons below the CV2 preview
-        self.preview_button = Gtk.ToggleButton(label="Toggle Preview")
+        self.preview_button = Gtk.ToggleButton(label="Enable Preview")
         self.preview_button.set_hexpand(True)
-        self.trace_button = Gtk.ToggleButton(label="Toggle Traces")
+        self.trace_button = Gtk.ToggleButton(label="Enable Traces")
         self.trace_button.set_hexpand(True)
-        self.class_button = Gtk.ToggleButton(label="Toggle Label")
+        self.class_button = Gtk.ToggleButton(label="Enable Label")
         self.class_button.set_hexpand(True)
         
         # Add button signals
@@ -262,9 +263,14 @@ class Main(Gtk.Window):
 
     def on_export_clicked(self, widget):
         filename = "gesture_commands.json"
-        with open(filename, 'w') as f:
-            json.dump(gesture_commands, f)
-        print(f"Gesture commands exported to {filename}")
+        try:
+            with open(filename, 'w') as f:
+                json.dump(gesture_commands, f)
+                self.show_confirmation_message(self, "Gesture commands exported successfully!")
+            print(f"Gesture commands exported to {filename}")
+        except (IOError) as e:
+            print(f"Error exporting gesture commands: {str(e)}")
+            self.show_confirmation_message(self, "Error exporting gesture commands (check console for details)")
 
     def on_import_clicked(self, widget):
         dialog = Gtk.FileChooserDialog(title="Please choose a JSON file", parent=self, action=Gtk.FileChooserAction.OPEN)
@@ -296,21 +302,38 @@ class Main(Gtk.Window):
     def toggle_video_preview(self, button):
         if button.get_active():
             self.preview_enabled = True
+            button.set_label("Disable Preview")
         else:
             self.preview_enabled = False
+            button.set_label("Enable Preview")
 
     def toggle_hand_traces(self, button):
         if button.get_active():
             self.hand_trace_enabled = True
+            button.set_label("Disable Traces")
         else:
             self.hand_trace_enabled = False
+            button.set_label("Enable Traces")
 
     def toggle_class_text(self, button):
         if button.get_active():
             self.class_text_enabled = True
+            button.set_label("Disable Label")
         else:
             self.class_text_enabled = False
-    
+            button.set_label("Enable Label")
+            
+    def show_confirmation_message(self, widget, text):
+        dialog = Gtk.MessageDialog(
+            transient_for=self,
+            flags=0,
+            message_type=Gtk.MessageType.INFO,
+            buttons=Gtk.ButtonsType.OK,
+            text=text
+        )
+        dialog.run()
+        dialog.destroy()
+
     def get_camera_sources(self):
         camera_sources = []
         for i in range(10):  # Check up to 10 camera sources
@@ -318,6 +341,8 @@ class Main(Gtk.Window):
             if cap.isOpened():
                 camera_sources.append(i)
                 cap.release()
+            else:
+                break
         return camera_sources
 
     def on_camera_source_changed(self, combo):
