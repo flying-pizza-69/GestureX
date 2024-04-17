@@ -62,6 +62,9 @@ class Main(Gtk.Window):
             textbox.set_width_chars(30)
             textbox.set_placeholder_text("Command")
             textbox.set_tooltip_text("Enter the command to execute for this gesture. Hint: Can concatenate multiple commands with '&&'")
+
+            label_widget.set_mnemonic_widget(textbox)
+
             self.grid.attach(label_widget, 0, i+1, 1, 1)
             self.grid.attach_next_to(textbox, label_widget, Gtk.PositionType.RIGHT, 1, 1)
             self.text_entries[label] = textbox
