@@ -6,9 +6,9 @@ GestureX enables you to control your Linux PC using hand gestures. You can assig
 
 ## Features
 
-- Recognizes hand gestures using a webcam
-- Maps hand gestures to custom commands or functionalities
+- Recognizes hand gestures and maps hand gestures to custom commands using a webcam
 - Real-time preview of webcam feed with hand gesture recognition
+- Supports multiple camera sources
 - Easily configurable through a graphical user interface
 
 ## Installation

@@ -4,7 +4,7 @@ from gi.repository import Gtk, GdkPixbuf, Gdk, GLib
 import cv2
 import numpy as np
 import mediapipe as mp
-from tensorflow.keras.models import load_model
+from keras.models import load_model
 import threading
 import os
 import json
@@ -262,9 +262,6 @@ class Main(Gtk.Window):
 
                     GLib.idle_add(self.update_video_widget, pixbuf)
 
-            else:
-                break
-
     def update_video_widget(self, pixbuf):
         self.video_widget.set_from_pixbuf(pixbuf)
         return False
@@ -356,16 +353,15 @@ class Main(Gtk.Window):
             if cap.isOpened():
                 camera_sources.append(i)
                 cap.release()
-            else:
-                break
         return camera_sources
 
     def on_camera_source_changed(self, combo):
         active_text = combo.get_active_text()
         if active_text:
             camera_index = int(active_text.split()[-1])
-            self.cap.release()  # Release the previous camera
-            self.cap = cv2.VideoCapture(camera_index)  # Open the new camera
+            if self.cap.isOpened():
+                self.cap.release()
+            self.cap = cv2.VideoCapture(camera_index)
 
     def update_cooldown(self, widget):
         cooldown = self.cooldown_textbox.get_text()
