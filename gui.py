@@ -69,7 +69,7 @@ class Main(Gtk.Window):
         # Create a separate row for buttons
         button_row = Gtk.Grid()
         button_row.set_column_spacing(6)
-        self.grid.attach(button_row, 0, len(class_names)+2, 2, 1)
+        self.grid.attach(button_row, 0, len(class_names) + 1, 2, 1)
 
         # Add "Save" button
         save_btn = Gtk.Button(label="Save")
@@ -109,12 +109,12 @@ class Main(Gtk.Window):
 
         # Create a widget for displaying the video
         self.video_widget = Gtk.Image()
-        self.grid.attach(self.video_widget, 3, 1, 1, len(class_names))
+        self.grid.attach(self.video_widget, 3, 0, 1, len(class_names))
         self.video_widget.set_tooltip_text("Live video preview")
 
         controls_row = Gtk.Grid()
         controls_row.set_column_spacing(6)
-        self.grid.attach(controls_row, 3, len(class_names) + 1, 1, 1)
+        self.grid.attach(controls_row, 3, len(class_names), 1, 1)
 
         # Camera source button
         camera_sources = self.get_camera_sources()
@@ -149,7 +149,7 @@ class Main(Gtk.Window):
         # Create a separate row for toggle buttons
         toggle_button_row = Gtk.Grid()
         toggle_button_row.set_column_spacing(6)
-        self.grid.attach(toggle_button_row, 3, len(class_names) + 2, 1, 1)
+        self.grid.attach(toggle_button_row, 3, len(class_names) + 1, 1, 1)
 
         # Add buttons below the CV2 preview
         self.preview_button = Gtk.ToggleButton(label="Enable Preview")
