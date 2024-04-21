@@ -98,7 +98,7 @@ GestureX is a Python application that recognizes hand gestures using a webcam an
 | Smile Hand        | 👉      |
 | Live Long         | 🖖      |
 
-These are the default hand gestures recognized by the application. Currently, I'm working on adding more hand gestures to the application. If you have any suggestions or want to contribute to the project, feel free to open an issue or submit a pull request.
+These are the default gestures recognized by the model I am currently using. I am also working on the possibility of adding your custom gestures and on the support for dynamic gestures. If you have any suggestions or want to contribute to the project, feel free to open an issue or submit a pull request.
 
 ## Credits
 
