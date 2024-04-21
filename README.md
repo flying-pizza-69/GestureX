@@ -1,25 +1,44 @@
 # GestureX 
 
-GestureX enables you to control your Linux PC using hand gestures. You can assign specific commands or functionalities to different hand gestures, allowing for hands-free interaction with your computer.
+## Table of Contents
+
+- [GestureX](#gesturex)
+  - [Table of Contents](#table-of-contents)
+  - [Description](#description)
+  - [Features](#features)
+  - [Installation](#installation)
+  - [Usage](#usage)
+  - [Supported Hand Gestures](#supported-hand-gestures)
+  - [Credits](#credits)
+  - [License](#license)
+
+## Description
+
+GestureX is a Python application that recognizes hand gestures using a webcam and maps them to custom commands making the interaction with your computer more intuitive, fun and inclusive. The application provides a real-time preview of the webcam feed with hand gesture recognition. It is easily configurable through a graphical user interface and supports multiple camera sources.
 
 ![](./screenshots/screenshot1.png)
 
 ## Features
 
-- Recognizes hand gestures and maps hand gestures to custom commands using a webcam
-- Real-time preview of webcam feed with hand gesture recognition
-- Supports multiple camera sources
-- Easily configurable through a graphical user interface
+- Hand gesture recognition: The application recognizes hand gestures using a webcam;
+- Real time preview: The application provides a real-time preview of the webcam feed with hand gesture recognition;
+- Multiple camera sources: The application supports multiple camera sources;
+- Easily configurable: The application is easily configurable through a graphical user interface.
 
 ## Installation
 
-1. Clone the repository (You can also clone this GitHub repo):
+1. Clone the repository (Pick your favorite mirror):
 
     ```bash
     git clone https://git.0x7f.in/sarthak/GestureX
     ```
 
+    ```bash
+    git clone https://github.com/flying-pizza-69/GestureX.git
+    ```
+
 2. Create and activate Virtual Environment
+    
     ```
     cd GestureX
     python3 -m venv venv
@@ -59,29 +78,35 @@ GestureX enables you to control your Linux PC using hand gestures. You can assig
 
 ## Usage
 
-1. Launch the application.
-2. Define hand gestures and assign commands or functionalities to them through the graphical user interface.
-3. Perform the defined hand gestures in front of your webcam to trigger the corresponding commands or functionalities.
+1. Start the application by running the `gui.py` script;
+2. Set the camera source and the desired hand gesture commands in the graphical user interface;
+3. Perform the hand gestures in front of the webcam to trigger the mapped commands and interact with your computer;
 4. (Optional) Import the `gestures_commands.json` file to get sample bindings to test the app.
 
 ## Supported Hand Gestures
 
-- "Okay" gesture
-- "Peace" sign
-- Thumbs up
-- Thumbs down
-- "Call me" gesture
-- Stop gesture
-- Rock and roll sign
-- Fist gesture
-- Smile hand gesture
-- "Live long" gesture
+| Hand Gesture Name | Gesture |
+|-------------------|---------|
+| Okay              | 👌      |
+| Peace             | ✌️      |
+| Thumbs Up         | 👍      |
+| Thumbs Down       | 👎      |
+| Call Me           | 🤙      |
+| Stop              | ✋      |
+| Rock and Roll     | 🤘      |
+| Fist Bump         | 👊      |
+| Smile Hand        | 👉      |
+| Live Long         | 🖖      |
 
-These are the default gestures supported by the model. I am working on adding your own custom gesture as well.
+These are the default hand gestures recognized by the application. Currently, I'm working on adding more hand gestures to the application. If you have any suggestions or want to contribute to the project, feel free to open an issue or submit a pull request.
 
 ## Credits
 
-This project utilizes the hand gesture recognition model provided by the [Google MediaPipe project](https://github.com/google/mediapipe).
+This project utilizes the following libraries:
+
+- [OpenCV](https://opencv.org/) for the webcam feed and image processing;
+- [Google MediaPipe project](https://github.com/google/mediapipe) for the hand gesture recognition model;
+- [Gtk](https://www.gtk.org/) for the graphical user interface;
 
 ## License
 
